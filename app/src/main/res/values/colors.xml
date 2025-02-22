@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="celeste">#03A9F4</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="icono_background">#FFFFFF</color>
+    <color name="primaryColor">#6200EE</color>
+    <color name="black">#000000</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="gray">#D3D3D3</color> <!-- fondo -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+</resources>

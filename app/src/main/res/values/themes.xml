@@ -1,0 +1,43 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme -->
+    <style name="Base.Theme.FerreProDigital" parent="Theme.Material3.DayNight">
+        <!-- Deshabilitar ActionBar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Colores principales -->
+        <item name="colorPrimary">@color/celeste</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Personalizar barra de estado y navegación -->
+        <item name="android:statusBarColor">@color/celeste</item>
+        <item name="android:navigationBarColor">@color/celeste</item>
+
+        <!-- Fuentes -->
+        <item name="android:fontFamily">sans-serif-condensed</item>
+
+        <!-- Bordes de los botones (si usas Material3) -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.MediumComponent</item>
+
+        <!-- Personalización de la Toolbar -->
+        <item name="toolbarStyle">@style/CustomToolbar</item>
+    </style>
+
+    <!-- Tema principal de la app -->
+    <style name="Theme.FerreProDigital" parent="Base.Theme.FerreProDigital" />
+
+    <!-- Estilo personalizado para la Toolbar -->
+    <style name="CustomToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/CustomToolbarTitle</item>
+    </style>
+
+    <style name="CustomToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item> <!-- Ajusta el tamaño del texto -->
+    </style>
+</resources>
