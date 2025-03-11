@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos necesarios -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -46,7 +53,7 @@
         <activity
             android:name=".ProductListActivity"
             android:exported="true"
-            android:label="Lista de productos"
+            android:label="@string/lista_de_productos2"
             android:theme="@style/Theme.FerreProDigital" />
 
         <!-- Detalle de un producto -->
@@ -76,16 +83,5 @@
             android:exported="false"
             android:label="@string/title_activity_credit"
             android:theme="@style/Theme.FerreProDigital" />
-
-        <!-- Categorías de productos -->
-        <activity android:name=".FontaneriaActivity" android:exported="false" />
-        <activity android:name=".HerramientasActivity" android:exported="false" />
-        <activity android:name=".MaterialesObraActivity" android:exported="false" />
-        <activity android:name=".RopaTrabajoActivity" android:exported="false" />
-        <activity android:name=".MaterialElectricoActivity" android:exported="false" />
-        <activity android:name=".HogarActivity" android:exported="false" />
-        <activity android:name=".JardinActivity" android:exported="false" />
-        <activity android:name=".BricolajeActivity" android:exported="false" />
-
     </application>
 </manifest>

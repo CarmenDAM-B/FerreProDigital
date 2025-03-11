@@ -1,12 +1,16 @@
 package com.example.ferreprodigital
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ferreprodigital.data.Cart
 import androidx.appcompat.widget.Toolbar
+
+/**
+ * BaseActivity es una Activity abstracta que centraliza funcionalidades comunes
+ * (configuración de la toolbar, manejo de menú, logout, etc.) para todas las demás Activities.
+ */
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -22,6 +26,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     // Maneja la selección de opciones del menú
+    // Permite navegar a Home, Cart, Contact y realizar logout.
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -29,6 +34,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
+
             R.id.action_home -> {
                 // Redirigir a ShopActivity si no estamos ya en ella
                 if (this::class.java.simpleName != "ShopActivity") {
@@ -38,18 +44,21 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
                 true
             }
+
             R.id.action_logout -> {
                 // Cerrar sesión
                 logout()
                 true
             }
+
             R.id.action_cart -> {
-                // Redirigir a CartActivity
+                // Redirigir a CartActivity (Carrito)
                 startActivity(Intent(this, CartActivity::class.java))
                 true
             }
+
             R.id.action_contact -> {
-                // Redirigir a CreditActivity
+                // Redirigir a CreditActivity (pago)
                 startActivity(Intent(this, CreditActivity::class.java))
                 true
             }
@@ -58,15 +67,8 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     // Cierra la sesión del usuario
+    // limpia el carrito, muestra un mensaje y redirige a MainActivity.
     private fun logout() {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-        sharedPreferences.edit().apply {
-            clear()
-            remove("isLoggedIn")
-            remove("username")
-            remove("password")
-            apply()
-        }
         Cart.clearCart() // Limpiar el carrito de compras
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
 

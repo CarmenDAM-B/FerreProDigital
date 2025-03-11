@@ -13,6 +13,11 @@ import com.example.ferreprodigital.data.Cart
 import android.view.Menu
 import android.util.Log
 
+/**
+ * CartActivity muestra el contenido del carrito de compras.
+ * Permite visualizar la lista de productos, actualizar el total y proceder al checkout.
+ */
+
 class CartActivity : BaseActivity() {
     private lateinit var recyclerViewCart: RecyclerView
     private lateinit var productAdapter: ProductAdapter
@@ -31,10 +36,10 @@ class CartActivity : BaseActivity() {
             textTotal = findViewById(R.id.textTotal)
             btnCheckout = findViewById(R.id.btnCheckout)
 
-            // Configuración del RecyclerView
+            // Configuración del RecyclerView para mostrar los productos del carrito
             recyclerViewCart.layoutManager = LinearLayoutManager(this)
             productAdapter = ProductAdapter(
-                productList = Cart.getItems(),  // Obtener productos del carrito
+                productList = Cart.getItems().toMutableList(),  // Obtener productos del carrito
                 onClick = { product ->
                     Toast.makeText(this, "${product.name} seleccionado", Toast.LENGTH_SHORT).show()
                 },
@@ -42,11 +47,13 @@ class CartActivity : BaseActivity() {
                     updateTotal()
                     updateCart()
                 },
+
+                // Cuando la cantidad cambia, se actualiza el total y se notifica al adapter.
                 showQuantityControls = true
             )
             recyclerViewCart.adapter = productAdapter
 
-            // Configuración del botón de checkout
+            // Configuración del botón de checkout para proceder al pago
             btnCheckout.setOnClickListener {
                 Log.d("CartActivity", "Botón checkout presionado")
                 if (Cart.getItems().isNotEmpty()) {

@@ -1,6 +1,6 @@
 package com.example.ferreprodigital.data
 
-import com.example.ferreprodigital.model.Product
+import com.example.ferreprodigital.data.models.Product
 import android.util.Log
 
 object Cart {
@@ -14,14 +14,14 @@ object Cart {
             
             if (items.containsKey(product.name)) {
                 val currentProduct = items[product.name]!!
-                Log.d("Cart", "Producto existente, cantidad actual: ${currentProduct.cantidad}")
+                Log.d("Cart", "Producto existente, cantidad actual: ${currentProduct.quantity}")
                 
                 // Crear nuevo producto con cantidad incrementada
                 val updatedProduct = Product(
                     name = currentProduct.name,
                     price = currentProduct.price,
                     imageResId = currentProduct.imageResId,
-                    cantidad = currentProduct.cantidad + 1
+                    quantity = currentProduct.quantity + 1
                 )
                 items[product.name] = updatedProduct
                 
@@ -32,7 +32,7 @@ object Cart {
                     name = product.name,
                     price = product.price,
                     imageResId = product.imageResId,
-                    cantidad = 1
+                    quantity = 1
                 )
                 items[product.name] = newProduct
             }
@@ -48,8 +48,8 @@ object Cart {
     fun removeItem(product: Product) {
         if (items.containsKey(product.name)) {
             val currentProduct = items[product.name]!!
-            if (currentProduct.cantidad > 1) {
-                items[product.name] = currentProduct.copy(cantidad = currentProduct.cantidad - 1)
+            if (currentProduct.quantity > 1) {
+                items[product.name] = currentProduct.copy(quantity = currentProduct.quantity - 1)
             } else {
                 // Si la cantidad llega a 0 o 1, eliminar el producto
                 items.remove(product.name)
@@ -64,7 +64,7 @@ object Cart {
 
     // Obtener el total a pagar
     fun getTotal(): Double {
-        return items.values.sumOf { it.price * it.cantidad }
+        return items.values.sumOf { it.price * it.quantity }
     }
 
     // Vaciar el carrito

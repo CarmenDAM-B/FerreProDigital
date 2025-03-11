@@ -50,5 +50,7 @@
     <string name="tiktok">TikTok</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="home">Inicio</string>
+    <string name="carrito">Carrito</string>
+    <string name="lista_de_productos2">Lista de productos</string>
 
 </resources>

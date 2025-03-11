@@ -7,80 +7,69 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.ferreprodigital.data.database.AppDatabase
+import com.example.ferreprodigital.data.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+/**
+ * MainActivity es la pantalla de login.
+ * Permite que el usuario inicie sesión verificando sus credenciales contra la base de datos.
+ */
+
+@SuppressLint("MissingInflatedId")
 class MainActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
+
+    private lateinit var editTextUser: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var buttonLogin: Button
+    private lateinit var buttonRegister: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Limpiar cualquier sesión anterior al iniciar
-        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-        sharedPreferences.edit().apply {
-            clear()
-            remove("isLoggedIn")
-            remove("username")
-            remove("password")
-            apply()
-        }
+        // Inicializar las vistas
+        editTextUser = findViewById(R.id.editTextUser)
+        editTextPassword = findViewById(R.id.editTextPassword)
+        buttonLogin = findViewById(R.id.buttonLogin)
+        buttonRegister = findViewById(R.id.buttonRegister)
 
-        // Establecer credenciales predefinidas
-        with(sharedPreferences.edit()) {
-            putString("username", "admin")
-            putString("password", "1234")
-            apply()
-        }
-
-        setupLoginUI()  // Mostrar la interfaz de login
-    }
-
-    private fun setupLoginUI() {
-        val editTextUser = findViewById<EditText>(R.id.editTextUser)
-        val editTextPassword = findViewById<EditText>(R.id.editTextPassword)
-        val buttonLogin = findViewById<Button>(R.id.buttonLogin)
-        val buttonRegister = findViewById<Button>(R.id.buttonRegister)
-
+        // Configurar el botón de Login
         buttonLogin.setOnClickListener {
             val username = editTextUser.text.toString()
             val password = editTextPassword.text.toString()
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                if (validateCredentials(username, password)) {
-                    // Guardar el estado de sesión
-                    with(getSharedPreferences("UserSession", MODE_PRIVATE).edit()) {
-                        putString("username", username)
-                        putBoolean("isLoggedIn", true)
-                        apply()
+                // Consultar el usuario en la base de datos
+                val database = AppDatabase.getDatabase(this)
+                val repository = UserRepository(database.userDao())
+                lifecycleScope.launch {
+                    val user = repository.getUserByUsername(username)
+                    withContext(Dispatchers.Main) {
+                        if (user != null && user.password == password) {
+                            Toast.makeText(this@MainActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                            login(username, password)
+                        } else {
+                            Toast.makeText(this@MainActivity, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                        }
                     }
-
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                    login(username, password)
-                } else {
-                    Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Usuario y contraseña requeridos", Toast.LENGTH_SHORT).show()
             }
         }
 
+        // Configurar el botón de Registro
         buttonRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
     }
 
-    private fun validateCredentials(username: String, password: String): Boolean {
-        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val registeredUsername = sharedPreferences.getString("username", "")
-        val registeredPassword = sharedPreferences.getString("password", "")
-        
-        // Agregar log para debug
-        println("Stored username: $registeredUsername, password: $registeredPassword")
-        println("Input username: $username, password: $password")
-        
-        return username == registeredUsername && password == registeredPassword
-    }
-
+    // Si el login es exitoso, se inicia ShopActivity pasando el username.
     private fun login(username: String, password: String) {
         val intent = Intent(this, ShopActivity::class.java)
         intent.putExtra("username", username)

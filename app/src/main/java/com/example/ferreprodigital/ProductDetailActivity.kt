@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.ferreprodigital.data.Cart
-import com.example.ferreprodigital.model.Product
+import com.example.ferreprodigital.data.models.Product
 import android.util.Log
 
 class ProductDetailActivity : BaseActivity() {
@@ -46,10 +46,11 @@ class ProductDetailActivity : BaseActivity() {
                     Log.d("ProductDetail", "Botón agregar al carrito presionado")
                     
                     val product = Product(
+                        productId = 0,
                         name = name,
                         price = price,
                         imageResId = imageResId,
-                        cantidad = 1
+                        quantity = 1
                     )
                     Log.d("ProductDetail", "Producto creado: $product")
 

@@ -4,14 +4,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ferreprodigital.adapter.CategoryAdapter
-import com.example.ferreprodigital.model.Category
+import com.example.ferreprodigital.data.database.AppDatabase
+import com.example.ferreprodigital.data.repository.CategoryRepository
+import com.example.ferreprodigital.data.models.Category
+import com.example.ferreprodigital.viewmodel.CategoryViewModel
+import com.example.ferreprodigital.viewmodel.CategoryViewModelFactory
+
+/**
+ * ShopActivity muestra las categorías disponibles en la tienda.
+ * Utiliza un RecyclerView con un GridLayoutManager para mostrar las categorías en forma de cuadrícula.
+ * Al seleccionar una categoría, se redirige a ProductListActivity, pasando el nombre de la categoría.
+ */
 
 class ShopActivity : BaseActivity() {
     private lateinit var recyclerViewCategories: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var categoryViewModel: CategoryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,26 +35,48 @@ class ShopActivity : BaseActivity() {
         // Configurar RecyclerView con GridLayoutManager de 2 columnas
         recyclerViewCategories.layoutManager = GridLayoutManager(this, 2)
 
-        val categories = listOf(
-            Category("Fontanería", R.drawable.fontaneria),
-            Category("Herramientas", R.drawable.herramientas),
-            Category("Materiales de Obra", R.drawable.materiales_obra),
-            Category("Ropa de Trabajo", R.drawable.ropa_trabajo),
-            Category("Material Eléctrico", R.drawable.material_electrico),
-            Category("Hogar", R.drawable.hogar),
-            Category("Jardín", R.drawable.jardin),
-            Category("Bricolaje", R.drawable.bricolaje)
-        )
-
-        categoryAdapter = CategoryAdapter(categories) { selectedCategory ->
+        // Inicializa el adapter con una lista vacía; luego se actualizará con los datos de la DB
+        categoryAdapter = CategoryAdapter(mutableListOf()) { selectedCategory ->
             openCategoryProducts(selectedCategory)
         }
 
         recyclerViewCategories.adapter = categoryAdapter
+
+        // Instanciar la base de datos y configurar el ViewModel para categorías
+        val database = AppDatabase.getDatabase(this)
+        val categoryDao = database.categoryDao()
+        val repository = CategoryRepository(categoryDao)
+        val viewModelFactory = CategoryViewModelFactory(repository)
+
+        // Observa la lista de categorías y actualiza el adapter.
+        categoryViewModel = ViewModelProvider(this, viewModelFactory)[CategoryViewModel::class.java]
+
+        // Observar los cambios en la lista de categorías
+        categoryViewModel.categoryList.observe(this) { categoryEntities ->
+            // Mapear CategoryEntity a Category (modelo de UI)
+            val categories = categoryEntities.map { entity ->
+                Category(
+                    name = entity.name,
+                    imageResId = entity.imageResId
+                )
+            }
+            // Actualiza el adapter
+            categoryAdapter.updateCategories(categories)
+        }
+
+        // Cargar las categorías desde la base de datos
+        categoryViewModel.loadCategories()
     }
+
+    /**
+     * Al seleccionar una categoría se abre ProductListActivity,
+     * pasando el nombre de la categoría como extra.
+     */
 
     private fun openCategoryProducts(category: Category) {
         val intent = Intent(this, ProductListActivity::class.java)
+
+        // Se pasa el nombre de la categoría (en ProductListActivity se mapea a un categoryId)
         intent.putExtra("CATEGORY_NAME", category.name)
         startActivity(intent)
     }
